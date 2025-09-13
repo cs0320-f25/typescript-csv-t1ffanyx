@@ -85,6 +85,7 @@ One design choice I made was to explicitly communicate success/failed parsing re
 #### How To…
 
 #### Team members and contributions (include cs logins):
+myan-nguyen (uncertain about her cs login???) - contributed to brainstorming of edge cases
 
 #### Collaborators (cslogins of anyone you worked with on this project and/or generative AI): 
 generative AI: ChatGPT for LLM section
