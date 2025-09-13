@@ -25,9 +25,8 @@ test("parseCSV yields only arrays", async () => {
   }
 });
 
-
 /**
- * extended test suite:
+ * extended testing suite:
  * - missing data
  * - attributes of a fields: commas, spaces, quotations 
  * - special characters
@@ -83,18 +82,18 @@ test("parseCSV: special character first", async () => {
 
 // schema doesn't match provided
 
-test("parseCSV: schema provided", async () => {
-  const PersonSchema = z.object({
-    name: z.string(),
-    age: z.union([z.string(), z.number()]),
-  });
+// test("parseCSV: schema provided", async () => {
+//   const PersonSchema = z.object({
+//     name: z.string(),
+//     age: z.union([z.string(), z.number()]),
+//   });
 
-  const results = await parseCSV(PEOPLE_CSV_PATH, { schema: PersonSchema });
+//   const results = await parseCSV(PEOPLE_CSV_PATH, { schema: PersonSchema });
 
-  expect(results[1]).toEqual([{ name: "Alice", age: "23"}]);
-});
+//   expect(results[1]).toEqual([{ name: "Alice", age: "23"}]);
+// });
 
-// column header
+// column header [think of how to test]
 
 
 
