@@ -9,7 +9,7 @@ const PEOPLE_CSV_PATH = path.join(__dirname, "../data/people.csv");
 test("parseCSV yields arrays", async () => {
   const results = await parseCSV(PEOPLE_CSV_PATH)
   
-  expect(results).toHaveLength(12);
+  expect(results).toHaveLength(13);
   expect(results[0]).toEqual(["name", "age"]);
   expect(results[1]).toEqual(["Alice", "23"]);
   expect(results[2]).toEqual(["Bob", "thirty"]); // why does this work? :(
@@ -33,6 +33,7 @@ test("parseCSV yields only arrays", async () => {
  * - schema
  * - column headers [come back to test]
  * - large files [come back to test]
+ * - empty CSV [come back to test]
  */
 
 // missing values handled
@@ -78,22 +79,31 @@ test("parseCSV: special character first", async () => {
   expect(results[10]).toEqual(["~nina", "16"]);
 });
 
-// too many columns (mismatch) --> throw error
+// too many columns (mismatch) --> throw error (haven't implemented yet)
 
 // test("parseCSV: too many columns", async () => {
 //   const results = await parseCSV(PEOPLE_CSV_PATH);
-//   expect(results[12]).toEqual(["MICHA!!!", "10"]);
+//   expect(results[12]).toEqual(["Bella", "10", "12"]);
 // });
 
 // schema: not specified (returns strings, in first example)
 
 // schema doesn't match provided
 
-// test("parseCSV: schema provided", async () => {
-//   const PersonSchema = z.object({
-//     name: z.string(),
-//     age: z.union([z.string(), z.number()]),
-//   });
+test("parseCSV: schema provided", async () => {
+
+  const PersonSchema = z.object({
+    name: z.string(),
+    age: z.union([z.string(), z.number()]),
+});
+  const results = await parseCSV(PEOPLE_CSV_PATH, PersonSchema);
+
+  expect(results[1]).toEqual({
+    success: true,
+    data: {name: "Alice", age: "23"}
+  });
+});
+
 
 //   const results = await parseCSV(PEOPLE_CSV_PATH, { schema: PersonSchema });
 

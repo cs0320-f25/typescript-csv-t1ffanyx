@@ -1,6 +1,11 @@
 import * as fs from "fs";
 import * as readline from "readline";
-import { ZodType } from "zod";
+import { ZodType, ZodError } from "zod";
+
+// communicates to the caller if transformation of a row via given schema succeeds/fails
+export type ParseResult<T> = 
+| { success: true; data: T }
+| { success: false; error: ZodError; raw: string[] }
 
 /**
  * This is a JSDoc comment. Similar to JavaDoc, it documents a public-facing
@@ -19,7 +24,7 @@ export async function parseCSV<T>(
   // specify parameters
   path: string,
   schema?: ZodType<T>,
-): Promise<string[][] | T[]> // generic string or specified schema 
+): Promise<string[][] | ParseResult<T>[]> // generic string or specified schema 
 
 { 
   // This initial block of code reads from a file in Node.js. The "rl"
@@ -31,14 +36,14 @@ export async function parseCSV<T>(
   });
 
   // Create an empty array to hold the results
-  let result = []
+  const result: string[][] = [];
   
   // We add the "await" here because file I/O is asynchronous. 
   // We need to force TypeScript to _wait_ for a row before moving on. 
   // More on this in class soon!
   for await (const line of rl) {
-    const values = line.split(",").map((v) => v.trim());
-    result.push(values)
+    const values: string[] = line.split(",").map((v: string) => v.trim()); // return string[][]
+    result.push(values);
   }
 
   // empty csv, return empty list
@@ -46,17 +51,31 @@ export async function parseCSV<T>(
     return [];
   }
 
-  // no schema provided
+  // no schema provided --> return string[][]
   if (!schema) return result;
 
   // schema provided, rows should follow object structure
-  const [headerRow, ... dataRows] = result; // split top headerRow with data entries
-  return dataRows.map( row => {
+
+  const [headerRow, ...dataRows] = result;
+
+  return result.map((row): ParseResult<T> => {
+
+    // convert row array to object
     const obj: Record<string, unknown> = {};
-    headerRow.forEach((h, i) => {
-      obj[h] = row[i];
-    })
-    return schema.parse(obj);
+      headerRow.forEach((header, i) => {
+        obj[header] = row[i];
+      });
+
+    // safeParse row (validate and transform data given schema)
+    const parseAttempt = schema.safeParse(obj);
+
+    // communicate to commander that parseAttempt failed (corrupt data)
+    if (!parseAttempt.success) {
+      return { success: false, error: parseAttempt.error, raw: row}
+    }
+
+    // return parsedData if valid
+    return { success: true, data: parseAttempt.data}
   });
 
 }
