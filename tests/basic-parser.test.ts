@@ -105,13 +105,6 @@ test("parseCSV: schema provided", async () => {
 });
 
 
-//   const results = await parseCSV(PEOPLE_CSV_PATH, { schema: PersonSchema });
-
-//   expect(results[1]).toEqual([{ name: "Alice", age: "23"}]);
-// });
-
-// column header [think of how to test]
-
 
 
 

@@ -71,6 +71,8 @@
 
 ### Design Choices
 
+One design choice I made was to explicitly communicate success/failed parsing results to the caller by creating a unique output type ParseResult<T> . This approach makes it easier for calling code to programmatically respond to errors, rather than relying on parsing functions to print messages to the console.
+
 ### 1340 Supplement
 
 - #### 1. Correctness
@@ -84,6 +86,9 @@
 
 #### Team members and contributions (include cs logins):
 
-#### Collaborators (cslogins of anyone you worked with on this project and/or generative AI):
-#### Total estimated time it took to complete project:
+#### Collaborators (cslogins of anyone you worked with on this project and/or generative AI): 
+generative AI: ChatGPT for LLM section
+#### Total estimated time it took to complete project: 
+4 hours
 #### Link to GitHub Repo:  
+https://github.com/cs0320-f25/typescript-csv-t1ffanyx.git
