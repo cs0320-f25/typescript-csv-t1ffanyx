@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as readline from "readline";
+import { ZodType } from "zod";
 
 /**
  * This is a JSDoc comment. Similar to JavaDoc, it documents a public-facing
@@ -14,7 +15,13 @@ import * as readline from "readline";
  * @param path The path to the file being loaded.
  * @returns a "promise" to produce a 2-d array of cell values
  */
-export async function parseCSV(path: string): Promise<string[][]> {
+export async function parseCSV<T>(
+  // specify parameters
+  path: string,
+  schema?: ZodType<T>,
+): Promise<string[][] | T[]> // generic string or specified schema 
+
+{ 
   // This initial block of code reads from a file in Node.js. The "rl"
   // value can be iterated over in a "for" loop. 
   const fileStream = fs.createReadStream(path);
@@ -22,7 +29,7 @@ export async function parseCSV(path: string): Promise<string[][]> {
     input: fileStream,
     crlfDelay: Infinity, // handle different line endings
   });
-  
+
   // Create an empty array to hold the results
   let result = []
   
@@ -33,5 +40,23 @@ export async function parseCSV(path: string): Promise<string[][]> {
     const values = line.split(",").map((v) => v.trim());
     result.push(values)
   }
-  return result
+
+  // empty csv, return empty list
+  if (result.length === 0) {
+    return [];
+  }
+
+  // no schema provided
+  if (!schema) return result;
+
+  // schema provided, rows should follow object structure
+  const [headerRow, ... dataRows] = result; // split top headerRow with data entries
+  return dataRows.map( row => {
+    const obj: Record<string, unknown> = {};
+    headerRow.forEach((h, i) => {
+      obj[h] = row[i];
+    })
+    return schema.parse(obj);
+  });
+
 }

@@ -78,6 +78,13 @@ test("parseCSV: special character first", async () => {
   expect(results[10]).toEqual(["~nina", "16"]);
 });
 
+// too many columns (mismatch) --> throw error
+
+// test("parseCSV: too many columns", async () => {
+//   const results = await parseCSV(PEOPLE_CSV_PATH);
+//   expect(results[12]).toEqual(["MICHA!!!", "10"]);
+// });
+
 // schema: not specified (returns strings, in first example)
 
 // schema doesn't match provided
